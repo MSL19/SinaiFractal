@@ -1,8 +1,9 @@
 const bgColor1 = "#224885";
 const bgColor2 = "#4287f5";
 const bgColor3 = "#164591";
-
+var iiii = 0;
 window.onload = function () {
+	
 	const canvas = document.getElementById("canvas");
 	/** @type {CanvasRenderingContext2D} */
 	const context = canvas.getContext("2d");
@@ -11,6 +12,16 @@ window.onload = function () {
 
 
 	const slider = document.getElementById('slider');
+var soundAllowed = function (stream){
+	window.persistAudioStream = stream;
+	var audioContent = new AudioContext();
+	var audioStream = audioContent.createMediaStreamSource( stream );
+	var analyser = audioContent.createAnalyser();
+	audioStream.connect(analyser);
+	analyser.fftSize = 2048;
+	var frequencyArray = new Uint8Array(analyser.frequencyBinCount);
+	analyser.getByteFrequencyData(frequencyArray);
+	var adjustedLength;
 
 	window.onresize = function (ev, ui) {
 		width = canvas.width = window.innerWidth;
@@ -24,8 +35,12 @@ window.onload = function () {
 
         drawPage();
 	};
-
 	function drawPage() {
+		analyser.getByteFrequencyData(frequencyArray);
+	var adjustedLength;
+		adjustedLength = Math.floor(frequencyArray[100]) - (Math.floor(frequencyArray[100]) % 1);
+
+		requestAnimationFrame(drawPage);
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.translate(width / 2, height / 2);
 
@@ -64,7 +79,6 @@ window.onload = function () {
 		// drawTriangle(p0, p1, p2);
 
 		function sierpinski(p0, p1, p2, limit) {
-
 			if (limit > 0) {
 				const pA = {
 					x: (p0.x + p1.x) / 2,
@@ -79,6 +93,7 @@ window.onload = function () {
 						y: (p2.y + p0.y) / 2
 					};
 
+
 				sierpinski(p0, pA, pC, limit - 1);
 				sierpinski(pA, p1, pB, limit - 1);
 				sierpinski(pC, pB, p2, limit - 1);
@@ -86,7 +101,7 @@ window.onload = function () {
 			}
 			else {
 				drawTriangle(p0, p1, p2);
-                context.rotate(Math.PI);
+				context.rotate(Math.PI-adjustedLength/1000);
        	        drawTriangle(p0, p1, p2);
                 context.rotate(-Math.PI);
 
@@ -121,5 +136,11 @@ window.onload = function () {
 	}
 
 	drawPage();
+	}
+	var soundNotAllowed = function (error) {
+        h.innerHTML = "You must allow your microphone.";
+        console.log(error);
+	}
+	navigator.getUserMedia({audio:true}, soundAllowed, soundNotAllowed);
 
 };
