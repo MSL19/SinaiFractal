@@ -2,6 +2,9 @@ const bgColor1 = "#224885";
 const bgColor2 = "#4287f5";
 const bgColor3 = "#164591";
 var iiii = 0;
+function showDesc(){
+	alert("This piece of artwork is meant to symbolize the fact that within every Jew there is a connection to HaShem or G-d, whether they know it or not. This is symbolized by the fact that the Star of David repeats continuously at every level of the fractal. The Jewish star Fractal, which is formed through two overlapping Sierpinsky triangles, is completely computer generated through recursion, and the slider at the top left can be used to increase the levels of recursion to make the fractal more complex. Warning: Higher levels of complexity may lag older computer systems. Finally, the artwork will react and distort based on sound inputs to signify the fact that beyond the written history of Judaism, there is also an oral tradition that must be preserved through passing it down between the generations.        -Max Lewis UChicago Class of 2023");
+}
 window.onload = function () {
 	
 	const canvas = document.getElementById("canvas");
@@ -37,24 +40,23 @@ var soundAllowed = function (stream){
 	};
 	function drawPage() {
 		analyser.getByteFrequencyData(frequencyArray);
-	var adjustedLength;
-		adjustedLength = Math.floor(frequencyArray[100]) - (Math.floor(frequencyArray[100]) % 1);
-
+		var audioSpin = Math.floor(frequencyArray[100]) - (Math.floor(frequencyArray[100]) % 1);
+		var audioScale = -(Math.floor(frequencyArray[200]) - (Math.floor(frequencyArray[200]) % 1))/700;
 		requestAnimationFrame(drawPage);
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.translate(width / 2, height / 2);
 
 		const p0 = {
 			x: 0,
-			y: -321*1.4
+			y: -321*(1.4+audioScale)
 		},
 			p1 = {
-				x: 278*1.4,
-				y: 160*1.4
+				x: 278*(1.4+audioScale),
+				y: 160*(1.4+audioScale)
 			},
 			p2 = {
-				x: -278*1.4,
-				y: 160*1.4
+				x: -278*(1.4+audioScale),
+				y: 160*(1.4+audioScale)
 			};
 
 		function bgFill(bgColor1, bgColor2, bgColor3) {
@@ -71,7 +73,7 @@ var soundAllowed = function (stream){
 
 		const triGrd = context.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
 		triGrd.addColorStop(0, "#F2657B");
-		triGrd.addColorStop(0.25, "#fadc19");
+		triGrd.addColorStop(0.25+audioSpin/700, "#fadc19");
 		triGrd.addColorStop(1, "#B9C482");
 
 		sierpinski(p0, p1, p2, slider.value);
@@ -101,7 +103,7 @@ var soundAllowed = function (stream){
 			}
 			else {
 				drawTriangle(p0, p1, p2);
-				context.rotate(Math.PI-adjustedLength/1000);
+				context.rotate(Math.PI-audioSpin/1000);
        	        drawTriangle(p0, p1, p2);
                 context.rotate(-Math.PI);
 

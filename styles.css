@@ -31,7 +31,11 @@ canvas {
     margin: 50px;
     background: transparent;
 }
+#desc{
+    display: block;
+    position: absolute;
 
+}
 input[type=range] {
     height: 25px;
     -webkit-appearance: none;
